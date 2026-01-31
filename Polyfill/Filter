@@ -1,0 +1,18 @@
+Array.prototype.myFilter = function(callback, thisArg) {
+    if (typeof callback !== "function") {
+        throw new TypeError(callback + " is not a function");
+    }
+    let result = [];
+    for(let i = 0;i < this.length;i++) {
+        if(i in this && callback.call(thisArg, this[i], i, this)) {
+            result.push(this[i]);
+        }
+    }
+    return result;
+}
+
+const arr = [1,7, 9,3, 4,10].filter(function(ele, i, arr) {
+    return ele > 5
+})
+
+console.log(arr);
