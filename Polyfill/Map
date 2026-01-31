@@ -9,17 +9,14 @@ Array.prototype.myMap = function (callback, thisArg) {
     throw new TypeError(callback + " is not a function");
   }
 
-  const result = [];
+  const result = new Array(this.length);
 
-  // Step 2: Iterate over array
   for (let i = 0; i < this.length; i++) {
-    // Step 3: Skip empty slots (important)
     if (i in this) {
-      // callback(element, index, array)
-      result.push(callback.call(thisArg, this[i], i, this));
+      result[i] = callback.call(thisArg, this[i], i, this);
     }
+    // else: leave hole as-is
   }
 
-  // Step 4: Return new array
   return result;
 };
