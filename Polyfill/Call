@@ -1,28 +1,25 @@
-function printDetail(age, state) {
-    console.log(`Your name is ${this.name}, age is ${age} and state is ${state}`);
-}
-
-let person = {
-    name : "Harsh Mishra"
-}
-
-// NORMAL CALL -> printDetail.call(person, 24, "Uttar Pradesh")
+// myCall polyfill
 // Invoked on a function.
-// First argument sets the `this` context; remaining arguments are passed to the function.
+// First argument sets the `this` context.
+// Remaining arguments are passed to the function.
 
-Function.prototype.myCall = function(context, ...args) {
-    if (typeof this !== "function") {
-        throw new TypeError("myCall must be called on a function");
-    }
-    // if context null or undefined - set to global context
-    context = context ?? globalThis;
-    
-    let key = Symbol("fn");
-    context[key] = this;
-    const result = context[key](...args);
-    delete context[key];
-    return result;
-    
-}
+Function.prototype.myCall = function (context, ...args) {
+  if (typeof this !== "function") {
+    throw new TypeError("myCall must be called on a function");
+  }
 
-printDetail.myCall(person, 24, "Uttar Pradesh")
+  // Default context
+  context = context ?? globalThis;
+
+  // Temporary unique property
+  const key = Symbol("fn");
+  context[key] = this;
+
+  // Invoke function
+  const result = context[key](...args);
+
+  // Cleanup
+  delete context[key];
+
+  return result;
+};
