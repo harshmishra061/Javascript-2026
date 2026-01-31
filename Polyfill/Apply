@@ -14,6 +14,9 @@ Function.prototype.myApply = function(context, args) {
     if (typeof this !== "function") {
         throw new TypeError("myApply must be called on a function");
     }
+    if(!Array.isArray(args)) {
+        throw new TypeError("Second argument must be an array");
+    }
     // if context null or undefined - set to global context
     context = context ?? globalThis;
     if (args == null) args = [];
