@@ -1,0 +1,46 @@
+//   Behavior of reduce():
+//   - Executes a reducer callback on each existing (non-empty) element of the array.
+//   - Uses `initialValue` as the accumulator if provided.
+//   - If `initialValue` is NOT provided, the first valid array element becomes the accumulator
+//     and iteration starts from the next index.
+//   - Skips empty slots in sparse arrays.
+//   - Throws a TypeError if called on null/undefined.
+//   - Throws a TypeError if called on an empty array without an initial value.
+//   - Callback receives (accumulator, currentValue, index, array).
+//   - Returns the final accumulated result.
+Array.prototype.myReduce = function(callback, initialValue) {
+    if (this == null) {
+        throw new TypeError("Called on null or undefined");
+    }
+    if(typeof callback != "function") {
+        throw new TypeError("Callback should be a function");
+    }
+    
+    let result;
+    let i = 0;
+    if(arguments.length > 1) {
+        result = initialValue;
+    } else {
+        while(i < this.length && !(i in this)) i++;
+        if (i == this.length) {
+            throw new TypeError("Reduce of empty array with no initial value");
+        }
+        result = this[i++];
+    }
+    
+    for(;i < this.length;i++) {
+        if(i in this) {
+            result = callback.call(null, result, this[i], i, this)
+        }
+    }
+    
+    return result;
+}
+
+
+
+let arr = [1, 2, 3, 4, 5];
+
+let res = arr.myReduce(function(acc, ele) {
+    return acc + ele
+});
