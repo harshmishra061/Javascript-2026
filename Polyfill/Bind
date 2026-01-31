@@ -1,0 +1,17 @@
+// myBind polyfill
+// Invoked on a function.
+// Takes the first argument as `this` context.
+// Remaining arguments are partially applied.
+// Returns a new function.
+
+Function.prototype.myBind = function (context, ...args) {
+  if (typeof this !== "function") {
+    throw new TypeError("myBind must be called on a function");
+  }
+
+  const fn = this;
+
+  return function (...newArgs) {
+    return fn.apply(context, [...args, ...newArgs]);
+  };
+};
