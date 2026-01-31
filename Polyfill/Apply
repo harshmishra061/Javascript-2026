@@ -1,32 +1,22 @@
-function printDetail(age, state) {
-    console.log(`Your name is ${this.name}, age is ${age} and state is ${state}`);
-}
-
-let person = {
-    name : "Harsh Mishra"
-}
-
-// NORMAL CALL -> printDetail.apply(person, [24, "Uttar Pradesh"])
+// myApply polyfill
 // Invoked on a function.
-// Takes two arguments: the context and the arguments to be passed to the function
+// Takes two arguments:
+// 1) context
+// 2) array of arguments for the function
 
-Function.prototype.myApply = function(context, args) {
-    if (typeof this !== "function") {
-        throw new TypeError("myApply must be called on a function");
-    }
-    if(!Array.isArray(args)) {
-        throw new TypeError("Second argument must be an array");
-    }
-    // if context null or undefined - set to global context
-    context = context ?? globalThis;
-    if (args == null) args = [];
-    
-    let key = Symbol("fn");
-    context[key] = this;
-    const result = context[key](...args);
-    delete context[key];
-    return result;
-    
-}
+Function.prototype.myApply = function (context, args) {
+  if (typeof this !== "function") {
+    throw new TypeError("myApply must be called on a function");
+  }
 
-printDetail.myApply(person, [24, "Uttar Pradesh"])
+  context = context ?? globalThis;
+  args = args ?? [];
+
+  const key = Symbol("fn");
+  context[key] = this;
+
+  const result = context[key](...args);
+
+  delete context[key];
+  return result;
+};
