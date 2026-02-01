@@ -1,0 +1,16 @@
+/**
+ * Promise.myRace polyfill
+ *
+ * Behavior:
+ * - Returns a promise that settles as soon as the FIRST input settles.
+ * - "First" can be resolve OR reject (whichever happens first).
+ * - Non-promise values are treated as already resolved via Promise.resolve().
+ * - If input is empty, the returned promise stays pending forever.
+ */
+Promise.myRace = function (arr) {
+  return new Promise((resolve, reject) => {
+    for (let i = 0; i < arr.length; i++) {
+      Promise.resolve(arr[i]).then(resolve).catch(reject);
+    }
+  });
+};
