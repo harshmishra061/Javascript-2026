@@ -1,0 +1,42 @@
+/**
+ * Promise.myAll polyfill
+ *
+ * Behavior:
+ * - Accepts an array of promises and/or normal values.
+ * - Returns a new Promise.
+ * - Resolves when ALL input promises are fulfilled.
+ * - Resolution value is an array of results in the SAME order as input,
+ *   regardless of the order in which promises resolve.
+ * - If any promise rejects, the returned promise rejects immediately
+ *   with the same error (first rejection wins).
+ * - Non-promise values are treated as already resolved
+ *   using Promise.resolve().
+ * - If the input array is empty, it resolves immediately with [].
+ */
+
+
+// ORIGINAL CALL
+// Promise.all([p1, p2, p3]).then(res => {
+//     console.log(res);
+// })
+
+Promise.myAll = function(arr) {
+    return new Promise((resolve, reject) => {
+        if(arr.length == 0) return resolve([]);
+        let result = Array(arr.length);
+        let promiseResolvedCount = 0;
+        
+        for(let i = 0;i < arr.length;i++) {
+            Promise.resolve(arr[i]).then(r => {
+                result[i] = r;
+                promiseResolvedCount++;
+                if(promiseResolvedCount == arr.length) resolve(result);
+            }).catch(e => {
+                reject(e);
+            })
+        }
+    })
+}
+Promise.myAll([p1, 2, p3]).then(res => {
+    console.log(res);
+})
