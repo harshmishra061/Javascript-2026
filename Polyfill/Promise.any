@@ -1,0 +1,32 @@
+/**
+ * Promise.myAny polyfill
+ *
+ * Behavior:
+ * - Resolves as soon as ANY input promise/value fulfills (first success wins).
+ * - Ignores rejections until ALL inputs reject.
+ * - If all reject, rejects with AggregateError containing all rejection reasons.
+ * - Non-promise values are treated as already fulfilled via Promise.resolve().
+ * - For empty input, rejects immediately with AggregateError([]).
+ */
+Promise.myAny = function (arr) {
+  return new Promise((resolve, reject) => {
+    if (arr.length === 0) {
+      return reject(new AggregateError([], "All promises were rejected"));
+    }
+
+    const errors = new Array(arr.length);
+    let rejectedCount = 0;
+
+    for (let i = 0; i < arr.length; i++) {
+      Promise.resolve(arr[i])
+        .then(resolve) // first fulfillment resolves the whole thing
+        .catch((err) => {
+          errors[i] = err;          // keep same index as input
+          rejectedCount++;
+          if (rejectedCount === arr.length) {
+            reject(new AggregateError(errors, "All promises were rejected"));
+          }
+        });
+    }
+  });
+};
