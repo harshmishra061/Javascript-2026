@@ -1,0 +1,40 @@
+/*
+Behavior of Promise.allSettled:
+- Accepts an array of promises or values
+- Returns a promise that NEVER rejects
+- Waits for ALL promises to settle (fulfilled or rejected)
+- Preserves the input order in the result array
+- Converts non-promise values into fulfilled promises
+- Each result is an object:
+    - fulfilled  → { status: "fulfilled", value }
+    - rejected   → { status: "rejected", reason }
+- Resolves asynchronously after all promises are settled
+*/
+
+Promise.myAllSettled = function (arr) {
+  return new Promise((resolve) => {
+    const result = [];
+    let count = 0;
+
+    if (arr.length === 0) {
+      resolve([]);
+      return;
+    }
+
+    for (let i = 0; i < arr.length; i++) {
+      Promise.resolve(arr[i])
+        .then((val) => {
+          result[i] = { status: "fulfilled", value: val };
+        })
+        .catch((err) => {
+          result[i] = { status: "rejected", reason: err };
+        })
+        .then(() => {
+          count++;
+          if (count === arr.length) {
+            resolve(result);
+          }
+        });
+    }
+  });
+};
