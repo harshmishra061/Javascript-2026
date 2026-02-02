@@ -1,0 +1,46 @@
+/*
+Debounce behavior:
+- Delays execution until `delay` ms have passed since the last call
+- Cancels the previous timer on every new call
+- Executes only once after calls stop
+- Uses the latest arguments and `this` context
+*/
+
+function print(str) {
+  console.log(str);
+}
+
+function debounce(callback, delay) {
+  let timeoutId = null;
+
+  return function (...args) {
+    const context = this;
+    clearTimeout(timeoutId);
+
+    timeoutId = setTimeout(() => {
+      callback.apply(context, args);
+    }, delay);
+  };
+}
+
+const debouncePrint = debounce(print, 1000);
+
+setTimeout(() => {
+  debouncePrint("called at 0ms → wait and prints at ~1000ms");
+}, 0);
+
+setTimeout(() => {
+  debouncePrint("called at 1100ms → wait and prints at ~2100ms"); // cancelled by 1500
+}, 1100);
+
+setTimeout(() => {
+  debouncePrint("called at 1500ms → wait and prints at ~2500ms");
+}, 1500);
+
+setTimeout(() => {
+  debouncePrint("called at 2600ms → wait and prints at ~3600ms"); // cancelled by 3000
+}, 2600);
+
+setTimeout(() => {
+  debouncePrint("called at 3000ms → prints at ~4000ms");
+}, 3000);
