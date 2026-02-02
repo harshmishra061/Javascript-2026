@@ -1,0 +1,51 @@
+/*
+Throttle behavior:
+- Ensures the function executes at most once every `delay` ms
+- Executes immediately on the first call (leading)
+- Ignores subsequent calls within the delay window
+- Preserves the latest `this` context and arguments of the allowed call
+*/
+
+function print(str) {
+  console.log(str);
+}
+
+function throttle(callback, delay) {
+  let nextAllowedTime = 0;
+
+  return function (...args) {
+    const context = this;
+    const now = Date.now();
+
+    if (now >= nextAllowedTime) {
+      callback.apply(context, args);
+      nextAllowedTime = now + delay;
+    }
+  };
+}
+
+const throttlePrint = throttle(print, 1000);
+
+setTimeout(() => {
+  throttlePrint("called at 0ms");
+}, 0);
+
+setTimeout(() => {
+  throttlePrint("called at 700ms"); // ignored
+}, 700);
+
+setTimeout(() => {
+  throttlePrint("called at 900ms"); // ignored
+}, 900);
+
+setTimeout(() => {
+  throttlePrint("called at 1100ms");
+}, 1100);
+
+setTimeout(() => {
+  throttlePrint("called at 1500ms"); // ignored
+}, 1500);
+
+setTimeout(() => {
+  throttlePrint("called at 2200ms");
+}, 2200);
