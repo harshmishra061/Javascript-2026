@@ -1,0 +1,32 @@
+/*
+Trailing Throttle using nextAllowedTime:
+- Executes immediately on first call
+- Suppresses calls during delay window
+- Executes ONE final trailing call with latest args
+*/
+
+function throttle(callback, delay) {
+  let nextAllowedTime = 0;
+  let timeoutId = null;
+  let lastArgs;
+  let lastContext;
+
+  return function (...args) {
+    const now = Date.now();
+    lastArgs = args;
+    lastContext = this;
+
+    if (now >= nextAllowedTime) {
+      // Leading execution
+      callback.apply(lastContext, lastArgs);
+      nextAllowedTime = now + delay;
+    } else if (!timeoutId) {
+      // Schedule trailing execution
+      timeoutId = setTimeout(() => {
+        callback.apply(lastContext, lastArgs);
+        nextAllowedTime = Date.now() + delay;
+        timeoutId = null;
+      }, nextAllowedTime - now);
+    }
+  };
+}
