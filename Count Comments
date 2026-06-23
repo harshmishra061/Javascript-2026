@@ -1,0 +1,16 @@
+```js
+function countComments(comment, set) {
+    if(set.has(comment)) {
+        throw new Error("Circular reference found");
+    }
+    if(!("replies" in comment)) {
+        throw new Error("Invalid comment structure")
+    }
+    set.add(comment);
+    let result = 1;
+    for(reply of comment.replies) {
+        result += countComments(reply, set);
+    }
+    return result;
+}
+```
